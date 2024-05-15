@@ -197,9 +197,9 @@ namespace ProyectoDeAula_SaraPineda_EmanuelGallego.Controllers
                 {
                     IdAgua = gastosAgua[i].IdAgua,
                     IdEnergia = gastosEnergia[i].IdEnergia,
-                    PagoAgua = (decimal)(gastosAgua[i].ConsumoActual * (double)precioAgua), // Convertir el precio a double antes de la multiplicación
-                    PagoEnergia = (decimal)(gastosEnergia[i].ConsumoActual * (double)precioEnergia), // Convertir el precio a double antes de la multiplicación
-                    PagoTotal = (decimal)((gastosAgua[i].ConsumoActual * (double)precioAgua) + (gastosEnergia[i].ConsumoActual * (double)precioEnergia))
+                    PagoAgua = (decimal)((gastosAgua[i].PromedioConsumo * (double)precioAgua) + ((gastosAgua[i].ConsumoActual - gastosAgua[i].PromedioConsumo) * 2 * (double)precioAgua)), // Convertir el precio a double antes de la multiplicación
+                    PagoEnergia = (decimal)((gastosEnergia[i].ConsumoActual * (double)precioEnergia) - ((gastosEnergia[i].MetaAhorro - gastosEnergia[i].ConsumoActual) * (double)precioEnergia)), // Convertir el precio a double antes de la multiplicación
+                    PagoTotal = (decimal)(((gastosEnergia[i].ConsumoActual * (double)precioEnergia) - ((gastosEnergia[i].MetaAhorro - gastosEnergia[i].ConsumoActual) * (double)precioEnergia)) + ((gastosAgua[i].PromedioConsumo * (double)precioAgua) + ((gastosAgua[i].ConsumoActual - gastosAgua[i].PromedioConsumo) * (2 * (double)precioAgua))))
                 };
 
                 db.tbFactura.Add(factura);

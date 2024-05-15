@@ -129,6 +129,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\EstadisticasAguaController.cs" />
+    <Compile Include="Controllers\EstadisticasEnergiaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\tbAguasController.cs" />
     <Compile Include="Controllers\tbClientesController.cs" />
@@ -260,6 +262,8 @@
     <Content Include="Views\tbPrecios\Index.cshtml" />
     <Content Include="Views\tbFacturas\BuscarFacturas.cshtml" />
     <Content Include="Views\tbFacturas\DetallesFacturas.cshtml" />
+    <Content Include="Views\EstadisticasAgua\Operaciones.cshtml" />
+    <Content Include="Views\EstadisticasEnergia\Operaciones.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
