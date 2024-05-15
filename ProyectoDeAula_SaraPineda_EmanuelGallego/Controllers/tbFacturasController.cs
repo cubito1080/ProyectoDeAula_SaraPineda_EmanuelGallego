@@ -136,5 +136,87 @@ namespace ProyectoDeAula_SaraPineda_EmanuelGallego.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [HttpGet]
+        public ActionResult BuscarFacturas()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult BuscarFacturas(string cedula)
+        {
+            // Buscar el cliente con la cédula proporcionada
+            var cliente = db.tbCliente.FirstOrDefault(c => c.Cedula == cedula);
+
+            if (cliente != null)
+            {
+                // Si el cliente existe, buscar las facturas asociadas a ese cliente
+                var facturas = db.tbFactura.Where(f => f.tbAgua.IdCliente == cliente.IdCliente || f.tbEnergia.IdCliente == cliente.IdCliente).ToList();
+
+                // Almacenar las facturas en TempData
+                TempData["Facturas"] = facturas;
+
+                return RedirectToAction("DetallesFacturas");
+            }
+            else
+            {
+                // Si el cliente no existe, agregar un mensaje de error al ModelState
+                ModelState.AddModelError("Cedula", "No hay una persona con dicha cédula.");
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult DetallesFacturas()
+        {
+            // Recuperar las facturas de TempData
+            var facturas = TempData["Facturas"] as List<tbFactura>;
+
+            return View(facturas);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DetallesFacturas(int id)
+        {
+            // Buscar los gastos de agua y energía del cliente
+            var gastosAgua = db.tbAgua.Where(a => a.IdCliente == id).ToList();
+            var gastosEnergia = db.tbEnergia.Where(e => e.IdCliente == id).ToList();
+
+            // Buscar los precios de los servicios de agua y energía
+            var precioAgua = db.tbPrecios.FirstOrDefault(p => p.Servicio == "agua").Precio;
+            var precioEnergia = db.tbPrecios.FirstOrDefault(p => p.Servicio == "energia").Precio;
+
+            // Crear una nueva factura para cada par de gastos de agua y energía
+            for (int i = 0; i < gastosAgua.Count && i < gastosEnergia.Count; i++)
+            {
+                tbFactura factura = new tbFactura
+                {
+                    IdAgua = gastosAgua[i].IdAgua,
+                    IdEnergia = gastosEnergia[i].IdEnergia,
+                    PagoAgua = (decimal)(gastosAgua[i].ConsumoActual * (double)precioAgua), // Convertir el precio a double antes de la multiplicación
+                    PagoEnergia = (decimal)(gastosEnergia[i].ConsumoActual * (double)precioEnergia), // Convertir el precio a double antes de la multiplicación
+                    PagoTotal = (decimal)((gastosAgua[i].ConsumoActual * (double)precioAgua) + (gastosEnergia[i].ConsumoActual * (double)precioEnergia))
+                };
+
+                db.tbFactura.Add(factura);
+            }
+
+            db.SaveChanges();
+
+            // Buscar las facturas asociadas al cliente
+            var facturas = db.tbFactura.Where(f => f.tbAgua.IdCliente == id || f.tbEnergia.IdCliente == id).ToList();
+
+
+            // Pasar las facturas a la vista
+            return View(facturas);
+        }
+
+
+
+
     }
 }

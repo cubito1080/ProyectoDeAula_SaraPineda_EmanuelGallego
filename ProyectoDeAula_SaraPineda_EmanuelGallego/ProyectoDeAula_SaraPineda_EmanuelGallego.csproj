@@ -258,11 +258,8 @@
     <Content Include="Views\tbPrecios\Details.cshtml" />
     <Content Include="Views\tbPrecios\Edit.cshtml" />
     <Content Include="Views\tbPrecios\Index.cshtml" />
-    <Content Include="Views\tbFacturas\Create.cshtml" />
-    <Content Include="Views\tbFacturas\Delete.cshtml" />
-    <Content Include="Views\tbFacturas\Details.cshtml" />
-    <Content Include="Views\tbFacturas\Edit.cshtml" />
-    <Content Include="Views\tbFacturas\Index.cshtml" />
+    <Content Include="Views\tbFacturas\BuscarFacturas.cshtml" />
+    <Content Include="Views\tbFacturas\DetallesFacturas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

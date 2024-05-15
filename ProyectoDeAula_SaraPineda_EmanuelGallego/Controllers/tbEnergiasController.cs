@@ -54,12 +54,46 @@ namespace ProyectoDeAula_SaraPineda_EmanuelGallego.Controllers
             {
                 db.tbEnergia.Add(tbEnergia);
                 db.SaveChanges();
-                return RedirectToAction("Index", "tbClientes", new { id = tbEnergia.IdCliente });
+
+                // Obtener los datos de agua y energía del cliente
+                var agua = db.tbAgua.FirstOrDefault(a => a.IdCliente == tbEnergia.IdCliente);
+                var energia = db.tbEnergia.FirstOrDefault(e => e.IdCliente == tbEnergia.IdCliente);
+
+                // Obtener los precios de agua y energía
+                var precioAgua = db.tbPrecios.FirstOrDefault(p => p.Servicio == "agua");
+                var precioEnergia = db.tbPrecios.FirstOrDefault(p => p.Servicio == "energia");
+
+                // Verificar que los precios existen
+                if (precioAgua != null && precioEnergia != null)
+                {
+                    // Crear la factura
+                    var factura = new tbFactura
+                    {
+                        IdAgua = agua.IdAgua,
+                        IdEnergia = energia.IdEnergia,
+                        IdPrecios = precioAgua.IdPrecios, // Asegúrate de que este es el IdPrecios correcto
+                        PagoAgua = (decimal)(agua.ConsumoActual * (double)precioAgua.Precio),
+                        PagoEnergia = (decimal)(energia.ConsumoActual * (double)precioEnergia.Precio),
+                        PagoTotal = (decimal)((agua.ConsumoActual * (double)precioAgua.Precio) + (energia.ConsumoActual * (double)precioEnergia.Precio))
+                    };
+
+                    db.tbFactura.Add(factura);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    // Si los precios no existen, agregar un mensaje de error al ModelState
+                    ModelState.AddModelError("", "No se encontraron los precios de agua o energía.");
+                }
+
+                return RedirectToAction("Index", "tbClientes");
             }
 
             ViewBag.IdCliente = new SelectList(db.tbCliente, "IdCliente", "Cedula", tbEnergia.IdCliente);
             return View(tbEnergia);
         }
+
+
 
         // GET: tbEnergias/Edit/5
         public ActionResult Edit(int? id)
